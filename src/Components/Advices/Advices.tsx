@@ -1,3 +1,4 @@
+import { Grid } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
 import Advice from '../Advice/Advice';
@@ -13,14 +14,11 @@ const Advices = ({allAdvices,adviceDispatch}:allAdvidesType) => {
     // console.log(allAdvices);
     
     return (
-        <Box sx={{margin:"2% 10%"}}>
-            <Box sx={{display:"grid", gridTemplateColumns: "1fr 1fr"}}>
+        <Grid container spacing={5}>
                 {
                     allAdvices?.map((advice,index)=><Advice advice={advice} index={index} adviceDispatch={adviceDispatch}  key={advice.id}></Advice>)
                 }
-            </Box>
-            
-        </Box>
+        </Grid>
     );
 };
 

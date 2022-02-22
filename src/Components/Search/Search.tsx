@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useReducer, useState } from 'react';
 import Advices from '../Advices/Advices';
 import SearchField from '../SearchField/SearchField';
@@ -78,9 +78,9 @@ const Search = () => {
                     You have {searchAdvices.total_results} advices on {searchAdvices.query}
                 </Typography>
             </Box>
-            <Box >
+            <Container >
                 <Advices allAdvices={customAdvices} adviceDispatch={adviceDispatch}></Advices>
-            </Box>
+            </Container>
         </Box>
     );
 };
