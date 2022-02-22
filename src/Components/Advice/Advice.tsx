@@ -45,7 +45,7 @@ const Advice = ({advice,index,adviceDispatch}: AdviceType) => {
                 }
                     <div>
                         {
-                            openTextEditor ? <button onClick={()=>{adviceDispatch({type:"EDIT", adviceId:advice.id, adviceText: editedText});setOpenTextEditor(false)}}>save</button>
+                            openTextEditor ? <Button sx={{padding:"1px", margin:"0 5px"}} onClick={()=>{adviceDispatch({type:"EDIT", adviceId:advice.id, adviceText: editedText});setOpenTextEditor(false)}} variant="contained" color="primary">save</Button>
                             : <Box sx={{position:"absolute", bottom:"5px"}}>
                                 <Box sx={{display:"flex",justifyContent: "space-between",alignItems:"center"}}>
                                     <Button sx={{padding:"1px", margin:"0 5px"}} onClick={()=>setOpenTextEditor(true)} variant='outlined'>Edit</Button>
