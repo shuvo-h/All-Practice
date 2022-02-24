@@ -5,6 +5,7 @@ type DispatchDeleteType = {
     type: "DELETE"
     adviceId: number
 }
+
 type DispatchEditType = {
     type: "EDIT"
     adviceId: number

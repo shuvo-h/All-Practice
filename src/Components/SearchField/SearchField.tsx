@@ -7,7 +7,7 @@ const SearchField = ({inputReceiver }: inputReceiverType) => {
     
     return (
         <form>
-            <TextField onChange={e=>inputReceiver(e.target.value)} type="text" id="outlined-basic" label="Advice on" variant="outlined" />
+            <TextField onChange={e=>inputReceiver(e.target.value)} type="text" id="outlined-basic" label="Search Advice" variant="outlined" />
         </form>
     );
 };
