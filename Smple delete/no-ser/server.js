@@ -249,10 +249,11 @@ app.get("/pc", async(req,res)=>{
 })
 
 app.get("/webS", async(req,res)=>{
+
   // const url = "https://biddrup.com/how-to-improve-your-knowledge-12-ways-to-get-smarter/";
-  const url = "https://www.bbc.com/news/world-us-canada-61933814";
+  // const url = "https://www.bbc.com/news/world-us-canada-61933814";
   // const url = "https://biddrup.com/200-titles-about-agriculture-to-help-you-dominate-as-an-expert-blogger/";
-  // const url = "https://ezinearticles.com/?The-Difference-Between-Deionized-and-Reverse-Osmosis-Water-Purification&id=10545734";
+  const url = "https://ezinearticles.com/?An-Overview-of-SiC-Material&id=10550031";
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(url,{waitUntil: 'load'});
@@ -313,11 +314,40 @@ app.get("/webS", async(req,res)=>{
     // console.log (s.substring(hacker[0],hacker[0]+find.length))
   })
 
+  
+  // change position of the title 
+    const title = await page.title();
+    titleParaPosition.find(element => element.text === title).position = 0;
+    
+
   // filter the null element of the result 
   const filteredTItleParaPosition = titleParaPosition.filter(el => el !== (null || undefined || el?.text) ).sort((a,b)=>a.position-b.position);
-  console.log(filteredTItleParaPosition.length);
-  res.json(filteredTItleParaPosition);
+  const resultPT = []
+  let isPtagStarted = false;
+  for(let i= filteredTItleParaPosition.length -1; i >= 0; i--){
+
+    if (isPtagStarted) {
+      resultPT.unshift(filteredTItleParaPosition[i])
+      // delete that element
+    } else if(!isPtagStarted && filteredTItleParaPosition[i].text.length > 50 ) {
+      // change that p tag started or it is the last p tag
+      resultPT.push(filteredTItleParaPosition[i])
+      console.log(filteredTItleParaPosition[i].text,"print - le");
+      isPtagStarted = true;
+    }else{
+      console.log(filteredTItleParaPosition[i]);
+    }
+
+
+
+  }
+  console.log(filteredTItleParaPosition.length, " to ",resultPT.length);
+  console.log(await page.title(), "************");
+  
+  // res.json(filteredTItleParaPosition);
+  res.json(resultPT);
   // res.json(bodyHTML);
+
 })
 
 app.get('/', (req, res) => {
