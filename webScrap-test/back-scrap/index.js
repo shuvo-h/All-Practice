@@ -4,7 +4,7 @@ const cors = require('cors')
 const puppeteer = require('puppeteer')
 require("dotenv").config()
 const app = express()
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5007;
 
 app.use(cors())
 app.use(express.urlencoded({extended: false}))
@@ -35,7 +35,7 @@ app.get("/scrap/", async(req,res)=>{
     }
     
   // create browser with puppeteer and go the the utl page
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
   const page = await browser.newPage();
   await page.goto(url,{waitUntil: 'load'});
   const alltitles = [];
@@ -133,13 +133,60 @@ app.get("/scrap/", async(req,res)=>{
   }
   console.log(filteredTItleParaPosition.length, " to ",resultPT.length);
   console.log(await page.title(), "************");
-  
+  browser.close()
   res.json(resultPT);
 
 })
 
+app.get("/textEnterN", (req,res)=>{
+  const mainText = "abcdef ghijkl mno pqr stuv wxyz. abcdef ghijkl mno pqr stuv wxyz. uthdn gkshi jg ki dhj";
+  const fontSize = 100; // max - 100 font size
+  const screenLength = 2200;
+  let tempLineArray = [];
+  let tempLine = [];
+  let lengthCounter = 0;
+  const wordArray = mainText.split(" ")
+
+  // optimize the words in a single line 
+  for(let word of wordArray){
+    lengthCounter += (word.length) * fontSize;
+    if (lengthCounter <= screenLength) {
+      tempLine.push(word);
+      lengthCounter += (1* fontSize) ;  // plus 1 for space " " adding
+    }else{
+      tempLineArray.push(tempLine.join(" "));
+      lengthCounter = word.length * fontSize;
+      tempLine = [word];
+    }
+  }
+  // insert last temp line
+  tempLineArray.push(tempLine.join(" "));
+
+  // find max length of the line
+  const lineLength = tempLineArray.map(line => line.length);
+  const maxLength = Math.max(...lineLength)
+  console.log(lineLength,"   =   ",maxLength);
+
+  // add free space to reach max line length
+  const lineArray = tempLineArray.map(line =>{
+    let spaceNeed = Math.floor((maxLength - line.length)/2);
+    let freeSpace = "";
+    for(let i of Array.from(Array(spaceNeed).keys())){
+      freeSpace += " ";
+    }
+    console.log(freeSpace);
+    return `${freeSpace}${line}${freeSpace}`;
+  });
+
+  // add \n for making new line
+  const slashLine = lineArray.join("\n");
+  console.log(slashLine);
+  res.send(slashLine)
+  // res.json(lineArray)
+})
+
 app.get('/', (req, res) => {
-  res.send('Hello Scrap World!')
+  res.send('Hello Demo Web Scrap World!')
 })
 
 app.listen(port, () => {

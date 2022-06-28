@@ -10,7 +10,8 @@ const ScrapTxt = ({scrapLinkOpen,setScrapLinkOpen}) => {
     const getScrapText = ()=>{
         console.log("got call back click");
         setIsLoading(true)
-        fetch(`http://localhost:5000/scrap/?weburl=${insertLink}`)
+        // fetch(`http://localhost:5000/scrap/?weburl=${insertLink}`)
+        fetch(`https://warm-dusk-46872.herokuapp.com/scrap/?weburl=${insertLink}`)
         .then(res => res.json())
         .then(data => {
             setIsLoading(false);
@@ -56,29 +57,13 @@ const ScrapTxt = ({scrapLinkOpen,setScrapLinkOpen}) => {
         // push the last para title object
         tempOptTextParaArr.push({...tempOptTextParaObj, pTitle: currentTitle});
         setOptimizedTextPara(tempOptTextParaArr);
-        // const tempOptTextParaArr = []
-        // let tempOptTextParaObj = {}
-        // let currentTag = null;
-        // // combine the text into a single object with next serialized similar tag
-        // textArr.sort((a,b)=>a.position-b.position).forEach(txtpara =>{ // apply foreacf after sorting position of array elements
-        //     if(currentTag === null){
-        //         currentTag = txtpara.tag;
-        //         tempOptTextParaObj = {...txtpara};
-        //     }else if(currentTag === txtpara.tag){
-        //         tempOptTextParaObj.text = `${tempOptTextParaObj.text} ${txtpara.text}`;
-        //     }else{
-        //         currentTag = txtpara.tag;  // if new tag, change the current tag status
-        //         tempOptTextParaArr.push(tempOptTextParaObj) // insert the previous optimized object to array
-        //         tempOptTextParaObj = {...txtpara}; // assign the new object with changing values of each properties
-        //     }
-        // })
     }
     const removeElement = (idx) =>{
         console.log(idx,"index nu");
         const tempScrapData = [...scrappedData];
         tempScrapData.splice(idx, 1);
         setScrappedData(tempScrapData);
-        optimizedTitlePara(scrappedData)
+        optimizedTitlePara(tempScrapData)
     }
     const changeTag = (idx,tagName) =>{
         console.log(idx,tagName);
@@ -99,7 +84,12 @@ const ScrapTxt = ({scrapLinkOpen,setScrapLinkOpen}) => {
         <div>
             <div style={{marginTop:"20px"}}>
                 <input onBlur={e=>setInsertLink(e.target.value)} type="url" placeholder="enter your article url" /> <br />
-                <button onClick={()=>{setScrapLinkOpen(true); getScrapText() }}  style={{border:"transparent",borderBottom:"1px solid blue", color:"blue", backgroundColor:"transparent", cursor:"pointer", fontSize:"15px",}}>insert link</button>
+                {
+                    !isLoading ? <button onClick={()=>{setScrapLinkOpen(true); getScrapText() }}  style={{border:"transparent",borderBottom:"1px solid blue", color:"blue", backgroundColor:"transparent", cursor:"pointer", fontSize:"15px",}}>insert link</button> 
+                    : <p>Scrapping....</p>
+                }
+                
+                
             </div>
             <div>
             <div  style={{ whiteSpace: "pre-line",margin:"2% 4%",textAlign:"left"}}>
