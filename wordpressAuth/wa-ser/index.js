@@ -6,7 +6,7 @@ const cors = require("cors");
 const fetch = require("node-fetch");
 
 const app = express()
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5002
 
 app.use(cors());
 
@@ -84,6 +84,54 @@ app.get('/wp-auth', async(req, res) => {
 
   res.json({puteText,txtHtml})
 })
+
+
+
+// nodejs crypto encript and decript any string
+/*
+  secret key generating:
+  step 1: go to wordpress salt generator and copy onel of them
+      https://api.wordpress.org/secret-key/1.1/salt/
+  step 2: go to sha1 converter online and convert the generated salt to onne of the hash code and use that code as the secret key
+      http://www.sha1-online.com/
+      
+*/
+const crypto = require("crypto");
+// crypto create sect key and iv with custom secret key and custom secret iv
+const crypto_secret_key = "hjds7sdf68ds9f78sdds0sd76f"; // hide this key in process.env
+const crypto_secret_iv = "f1ab9bba7a5a3739c08225fb";  // use the wordpress salt generator to get the secret iv
+const encryptionMethodAlgorithm = 'AES-256-CBC';
+const key = crypto.createHash('sha512').update(crypto_secret_key,"utf-8").digest("hex").substr(0,32);
+const iv = crypto.createHash('sha512').update(crypto_secret_iv,"utf-8").digest("hex").substr(0,16);
+
+app.get("/encript-decrept",async(req,res)=>{
+  // let listOfSupportedHashes = crypto.getHashes();  // just to know the list of hashes we can use in hashing
+  // console.log('Total supported hashes : ', listOfSupportedHashes.length);
+  const passwordPlainText = "This is My Password";
+  const encryptedText = encryptCryptoString(passwordPlainText,encryptionMethodAlgorithm,key,iv)
+  console.log(encryptedText,"encryptedText");
+  const decreptedResult = decryptCryptoString(encryptedText,encryptionMethodAlgorithm,key,iv);
+  res.json({encryptedText,decreptedResult})
+})
+
+
+// crypto encrypt function, move this to utils file
+function encryptCryptoString(plain_text,encryptionMethodAlgorithm,secretKey,iv) {
+  const encryptor = crypto.createCipheriv(encryptionMethodAlgorithm,secretKey,iv);
+  const aes_encrypted = encryptor.update(plain_text,"utf8","base64") + encryptor.final('base64');
+  return Buffer.from(aes_encrypted).toString('base64');
+}
+
+// crypto decrypt function, move this to utils file
+function decryptCryptoString(encrypted_text,encryptionMethodAlgorithm,secretKey,iv) {
+  const encryptedBuffer = Buffer.from(encrypted_text,'base64');
+  encrypted_text = encryptedBuffer.toString('utf-8');
+  const decryptor = crypto.createDecipheriv(encryptionMethodAlgorithm,secretKey,iv);
+  return decryptor.update(encrypted_text,'base64','utf8') + decryptor.final('utf8');
+}
+
+
+
 
 app.get('/', (req, res) => {
   res.send('Hello Wordpress World!')

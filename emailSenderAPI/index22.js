@@ -5,7 +5,7 @@ const { google } = require('googleapis');
 const fs = require('fs');
 const path = require('path');
 const app = express()
-const port = 5000
+const port = 5022
 
 const client_id = process.env.GAMIL_API_CLIENT_ID;
 const client_secret = process.env.GMAIL_API_CLIENT_SECRET;
@@ -39,6 +39,19 @@ app.get('/refreshtoken', async(req, res) => {
     res.json(sentID);
 })
 
+
+app.get("/sendWithRefreshTokenFromDB",async(req,res)=>{
+    // get this code from DB and use it as much time to send email hi hi
+    const tokenObjfromDB = {
+        access_token : `${accessTokenBrowserCode}`,
+        refresh_token : `${refreshToken}`
+      }
+    const sendRes = await main(tokenObjfromDB)
+    console.log(sendRes);
+    res.json(sendRes)
+})
+
+
 async function getRefreshTokens(browserToken) {
     const allTokens = new Promise((resolve,reject)=>{
         oAuth2Client.getToken(browserToken).then(({ tokens }) => {
@@ -48,6 +61,8 @@ async function getRefreshTokens(browserToken) {
     })
     return allTokens;
 }
+
+
 
 const getGmailService = async(tokensObj) => {
     oAuth2Client.setCredentials(tokensObj);
